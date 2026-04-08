@@ -1,0 +1,70 @@
+# ==============================
+# NODE (Frontend)
+# ==============================
+node_modules/
+dist/
+build/
+.vite/
+.cache/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==============================
+# ENV FILES (VERY IMPORTANT)
+# ==============================
+.env
+.env.*
+!.env.example
+
+# ==============================
+# OS FILES
+# ==============================
+.DS_Store
+Thumbs.db
+
+# ==============================
+# IDE / EDITOR
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# PYTHON (reports-service)
+# ==============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# ==============================
+# GENERATED FILES
+# ==============================
+reports-service/temp/
+*.pdf
+*.xlsx
+
+# ==============================
+# DOCKER
+# ==============================
+docker-compose.override.yml
+
+# ==============================
+# TEST / COVERAGE
+# ==============================
+coverage/
+.nyc_output/
+
+# ==============================
+# MISC
+# ==============================
+*.log
