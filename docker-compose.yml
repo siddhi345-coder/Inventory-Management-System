@@ -45,7 +45,7 @@ services:
     build: ./frontend
     container_name: frontend
     ports:
-      - "5174:80"
+      - "80:80"
     depends_on:
       - backend
       - reports-service

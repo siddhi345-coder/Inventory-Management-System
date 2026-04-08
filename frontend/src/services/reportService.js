@@ -1,4 +1,4 @@
-const REPORTS_BASE = import.meta.env.VITE_REPORTS_URL || "http://localhost:8000";
+const REPORTS_BASE = import.meta.env.VITE_REPORTS_URL || "/reports-api";
 
 // Fetch sales JSON summary from the Python microservice
 export const getSalesReport = async () => {
