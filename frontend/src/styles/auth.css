@@ -56,6 +56,37 @@
   border-left: 4px solid #c53030;
 }
 
+.success-message {
+  background-color: #c6f6d5;
+  color: #276749;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  border-left: 4px solid #276749;
+}
+
+.token-display {
+  background: #edf2f7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #2d3748;
+  word-break: break-all;
+}
+
+.token-display span {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.token-display code {
+  font-family: monospace;
+  color: #553c9a;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;

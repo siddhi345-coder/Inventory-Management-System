@@ -76,6 +76,11 @@ export default function Login() {
           <button type="submit" className="auth-button" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
+          <div style={{ textAlign: "right", marginTop: "-8px" }}>
+            <Link to="/forgot-password" className="auth-link" style={{ fontSize: "13px" }}>
+              Forgot password?
+            </Link>
+          </div>
         </form>
 
         <div className="auth-footer">

@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const generateToken = require('../utils/jwt');
 
 exports.register = async (req, res) => {
@@ -54,6 +55,69 @@ exports.register = async (req, res) => {
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ message: 'Registration failed' });
+    }
+};
+
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const userResult = await new Promise((resolve, reject) => {
+            db.query('SELECT id FROM users WHERE email = ?', [email], (err, result) => {
+                if (err) reject(err); else resolve(result);
+            });
+        });
+
+        if (userResult.length === 0) {
+            return res.status(404).json({ message: 'No account found with that email' });
+        }
+
+        const token = crypto.randomBytes(32).toString('hex');
+        const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+        await new Promise((resolve, reject) => {
+            db.query(
+                'UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE email = ?',
+                [token, expires, email],
+                (err, result) => { if (err) reject(err); else resolve(result); }
+            );
+        });
+
+        res.json({ message: 'Reset token generated', token });
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        res.status(500).json({ message: 'Failed to process request' });
+    }
+};
+
+exports.resetPassword = async (req, res) => {
+    const { token, newPassword } = req.body;
+    try {
+        const userResult = await new Promise((resolve, reject) => {
+            db.query(
+                'SELECT id FROM users WHERE reset_token = ? AND reset_token_expires > NOW()',
+                [token],
+                (err, result) => { if (err) reject(err); else resolve(result); }
+            );
+        });
+
+        if (userResult.length === 0) {
+            return res.status(400).json({ message: 'Invalid or expired reset token' });
+        }
+
+        const hash = await bcrypt.hash(newPassword, 10);
+
+        await new Promise((resolve, reject) => {
+            db.query(
+                'UPDATE users SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?',
+                [hash, userResult[0].id],
+                (err, result) => { if (err) reject(err); else resolve(result); }
+            );
+        });
+
+        res.json({ message: 'Password reset successfully' });
+    } catch (error) {
+        console.error('Reset password error:', error);
+        res.status(500).json({ message: 'Failed to reset password' });
     }
 };
 
