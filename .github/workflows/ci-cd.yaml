@@ -76,7 +76,8 @@ jobs:
             cd "$EC2_PATH"
 
             echo "=== Pulling latest code ==="
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
 
             echo "=== Writing backend .env ==="
             printf "PORT=5000\nDB_HOST=%s\nDB_PORT=3306\nDB_USER=%s\nDB_PASSWORD=%s\nDB_NAME=laptop_shop\nJWT_SECRET=%s\nPYTHON_SERVICE_URL=http://reports-service:8000\nEMAIL_USER=%s\nEMAIL_PASS=%s\n" \
