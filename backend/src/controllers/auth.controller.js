@@ -79,7 +79,7 @@ exports.sendOtp = async (req, res) => {
             return res.status(404).json({ message: 'No account found with that email' });
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+        const expires = new Date(Date.now() + 10 * 60 * 1000);
 
         await new Promise((resolve, reject) => {
             db.query(
@@ -106,8 +106,8 @@ exports.sendOtp = async (req, res) => {
 
         res.json({ message: 'OTP sent to your email' });
     } catch (error) {
-        console.error('Send OTP error:', error);
-        res.status(500).json({ message: 'Failed to send OTP' });
+        console.error('Send OTP error:', error.message || error);
+        res.status(500).json({ message: error.message || 'Failed to send OTP' });
     }
 };
 

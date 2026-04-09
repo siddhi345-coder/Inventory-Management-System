@@ -1,6 +1,7 @@
 // 1. IMPORTS
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 
 // 2. CREATE APP
 const app = express();
