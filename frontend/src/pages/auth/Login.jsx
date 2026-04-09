@@ -62,7 +62,12 @@ export default function Login() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <label htmlFor="password">Password</label>
+              <Link to="/forgot-password" className="auth-link" style={{ fontSize: "13px", fontWeight: "500" }}>
+                Forgot password?
+              </Link>
+            </div>
             <input
               id="password"
               type="password"
@@ -76,11 +81,6 @@ export default function Login() {
           <button type="submit" className="auth-button" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
-          <div style={{ textAlign: "right", marginTop: "-8px" }}>
-            <Link to="/forgot-password" className="auth-link" style={{ fontSize: "13px" }}>
-              Forgot password?
-            </Link>
-          </div>
         </form>
 
         <div className="auth-footer">
