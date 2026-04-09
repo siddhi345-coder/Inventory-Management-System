@@ -56,13 +56,20 @@ jobs:
 
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.0.0
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          EC2_PATH: ${{ secrets.EC2_PATH }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DB_HOST,DB_USER,DB_PASSWORD,JWT_SECRET,EC2_PATH
           script: |
             echo "=== Navigating to project ==="
-            cd ${{ secrets.EC2_PATH }}
+            cd "$EC2_PATH"
 
             echo "=== Pulling latest code ==="
             git pull origin main
@@ -70,20 +77,20 @@ jobs:
             echo "=== Updating .env files ==="
             cat > backend/.env << EOF
 PORT=5000
-DB_HOST=${{ secrets.DB_HOST }}
+DB_HOST=$DB_HOST
 DB_PORT=3306
-DB_USER=${{ secrets.DB_USER }}
-DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+DB_USER=$DB_USER
+DB_PASSWORD=$DB_PASSWORD
 DB_NAME=laptop_shop
-JWT_SECRET=${{ secrets.JWT_SECRET }}
+JWT_SECRET=$JWT_SECRET
 PYTHON_SERVICE_URL=http://reports-service:8000
 EOF
 
             cat > reports-service/.env << EOF
-DB_HOST=${{ secrets.DB_HOST }}
+DB_HOST=$DB_HOST
 DB_PORT=3306
-DB_USER=${{ secrets.DB_USER }}
-DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+DB_USER=$DB_USER
+DB_PASSWORD=$DB_PASSWORD
 DB_NAME=laptop_shop
 APP_PORT=8000
 EOF
