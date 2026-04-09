@@ -17,8 +17,6 @@ import MyRequests from "../pages/user/MyRequests";
 import ProductRequests from "../pages/staff/ProductRequests";
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import ResetPassword from "../pages/auth/ResetPassword";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 import RoleProtectedRoute from "../components/common/RoleProtectedRoute";
 
@@ -37,8 +35,6 @@ const AppRoutes = () => {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
         
         {/* Protected Routes */}
         <Route 

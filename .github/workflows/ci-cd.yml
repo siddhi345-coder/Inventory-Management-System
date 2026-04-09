@@ -64,14 +64,11 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           EC2_PATH: ${{ secrets.EC2_PATH }}
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_HOST,DB_USER,DB_PASSWORD,JWT_SECRET,EC2_PATH,EMAIL_USER,EMAIL_PASS,FRONTEND_URL
+          envs: DB_HOST,DB_USER,DB_PASSWORD,JWT_SECRET,EC2_PATH
           script: |
             set -e
             cd "$EC2_PATH"
@@ -80,8 +77,8 @@ jobs:
             git pull origin main
 
             echo "=== Writing backend .env ==="
-            printf "PORT=5000\nDB_HOST=%s\nDB_PORT=3306\nDB_USER=%s\nDB_PASSWORD=%s\nDB_NAME=laptop_shop\nJWT_SECRET=%s\nPYTHON_SERVICE_URL=http://reports-service:8000\nEMAIL_USER=%s\nEMAIL_PASS=%s\nFRONTEND_URL=%s\n" \
-              "$DB_HOST" "$DB_USER" "$DB_PASSWORD" "$JWT_SECRET" "$EMAIL_USER" "$EMAIL_PASS" "$FRONTEND_URL" > backend/.env
+            printf "PORT=5000\nDB_HOST=%s\nDB_PORT=3306\nDB_USER=%s\nDB_PASSWORD=%s\nDB_NAME=laptop_shop\nJWT_SECRET=%s\nPYTHON_SERVICE_URL=http://reports-service:8000\n" \
+              "$DB_HOST" "$DB_USER" "$DB_PASSWORD" "$JWT_SECRET" > backend/.env
 
             echo "=== Writing reports-service .env ==="
             printf "DB_HOST=%s\nDB_PORT=3306\nDB_USER=%s\nDB_PASSWORD=%s\nDB_NAME=laptop_shop\nAPP_PORT=8000\n" \
@@ -98,9 +95,6 @@ jobs:
 
             echo "=== Waiting for services ==="
             sleep 20
-
-            echo "=== Running DB migration ==="
-            docker exec backend node -e 'const db=require("./src/config/db");db.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(64) NULL, ADD COLUMN IF NOT EXISTS reset_token_expires DATETIME NULL",function(err){if(err&&err.code!=="ER_DUP_FIELDNAME")console.error(err);else console.log("Migration done");process.exit(0);});' || true
 
             echo "=== Container status ==="
             docker-compose ps
