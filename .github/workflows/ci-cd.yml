@@ -117,14 +117,7 @@ EOF
             sleep 15
 
             echo "=== Running DB migrations ==="
-            docker exec backend node -e "
-              const db = require('./src/config/db');
-              db.query(\"ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(64) NULL, ADD COLUMN IF NOT EXISTS reset_token_expires DATETIME NULL\", (err) => {
-                if (err && err.code !== 'ER_DUP_FIELDNAME') console.error(err);
-                else console.log('Migration done');
-                process.exit(0);
-              });
-            " || true
+            docker exec backend node -e 'const db=require("./src/config/db");db.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(64) NULL, ADD COLUMN IF NOT EXISTS reset_token_expires DATETIME NULL",(err)=>{if(err&&err.code!=="ER_DUP_FIELDNAME")console.error(err);else console.log("Migration done");process.exit(0);});' || true
 
             echo "=== Container status ==="
             docker-compose ps
