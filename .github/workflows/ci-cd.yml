@@ -64,11 +64,14 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           EC2_PATH: ${{ secrets.EC2_PATH }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_HOST,DB_USER,DB_PASSWORD,JWT_SECRET,EC2_PATH
+          envs: DB_HOST,DB_USER,DB_PASSWORD,JWT_SECRET,EC2_PATH,EMAIL_USER,EMAIL_PASS,FRONTEND_URL
           script: |
             echo "=== Navigating to project ==="
             cd "$EC2_PATH"
@@ -78,25 +81,28 @@ jobs:
 
             echo "=== Updating backend .env ==="
             cat > backend/.env <<EOF
-            PORT=5000
-            DB_HOST=$DB_HOST
-            DB_PORT=3306
-            DB_USER=$DB_USER
-            DB_PASSWORD=$DB_PASSWORD
-            DB_NAME=laptop_shop
-            JWT_SECRET=$JWT_SECRET
-            PYTHON_SERVICE_URL=http://reports-service:8000
-            EOF
+PORT=5000
+DB_HOST=$DB_HOST
+DB_PORT=3306
+DB_USER=$DB_USER
+DB_PASSWORD=$DB_PASSWORD
+DB_NAME=laptop_shop
+JWT_SECRET=$JWT_SECRET
+PYTHON_SERVICE_URL=http://reports-service:8000
+EMAIL_USER=$EMAIL_USER
+EMAIL_PASS=$EMAIL_PASS
+FRONTEND_URL=$FRONTEND_URL
+EOF
 
             echo "=== Updating reports-service .env ==="
             cat > reports-service/.env <<EOF
-            DB_HOST=$DB_HOST
-            DB_PORT=3306
-            DB_USER=$DB_USER
-            DB_PASSWORD=$DB_PASSWORD
-            DB_NAME=laptop_shop
-            APP_PORT=8000
-            EOF
+DB_HOST=$DB_HOST
+DB_PORT=3306
+DB_USER=$DB_USER
+DB_PASSWORD=$DB_PASSWORD
+DB_NAME=laptop_shop
+APP_PORT=8000
+EOF
 
             echo "=== Stopping old containers ==="
             docker-compose down
@@ -109,6 +115,16 @@ jobs:
 
             echo "=== Waiting for containers ==="
             sleep 15
+
+            echo "=== Running DB migrations ==="
+            docker exec backend node -e "
+              const db = require('./src/config/db');
+              db.query(\"ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(64) NULL, ADD COLUMN IF NOT EXISTS reset_token_expires DATETIME NULL\", (err) => {
+                if (err && err.code !== 'ER_DUP_FIELDNAME') console.error(err);
+                else console.log('Migration done');
+                process.exit(0);
+              });
+            " || true
 
             echo "=== Container status ==="
             docker-compose ps
