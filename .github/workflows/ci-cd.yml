@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  # ───────────────────────── BUILD JOB ─────────────────────────
+  # ─────────────── BUILD JOB ───────────────
   build:
     runs-on: ubuntu-latest
 
@@ -21,7 +21,6 @@ jobs:
         with:
           node-version: "20"
 
-      # ───── FRONTEND ─────
       - name: Install frontend dependencies
         working-directory: ./frontend
         run: npm install
@@ -33,12 +32,10 @@ jobs:
           VITE_API_URL: /api
           VITE_REPORTS_URL: /reports-api
 
-      # ───── BACKEND ─────
       - name: Install backend dependencies
         working-directory: ./backend
         run: npm install
 
-      # ───── REPORTS SERVICE ─────
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -49,7 +46,7 @@ jobs:
         run: pip install -r requirements.txt
 
 
-  # ───────────────────────── DEPLOY JOB ─────────────────────────
+  # ─────────────── DEPLOY JOB ───────────────
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -61,7 +58,6 @@ jobs:
 
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.0.0
-
         env:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
@@ -70,64 +66,39 @@ jobs:
           EC2_PATH: ${{ secrets.EC2_PATH }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_HOST,DB_USER,DB_PASSWORD,JWT_SECRET,EC2_PATH,EMAIL_USER,EMAIL_PASS,FRONTEND_URL
-
+          envs: DB_HOST,DB_USER,DB_PASSWORD,JWT_SECRET,EC2_PATH,EMAIL_USER,EMAIL_PASS
           script: |
-            echo "══════════════════════════════════════"
-            echo "🚀 Starting Deployment"
-            echo "══════════════════════════════════════"
-
+            set -e
             cd "$EC2_PATH"
 
-            echo "📥 Pulling latest code..."
+            echo "=== Pulling latest code ==="
             git pull origin main
 
-            echo "📝 Creating backend .env..."
-            cat > backend/.env <<EOF
-            PORT=5000
-            DB_HOST=$DB_HOST
-            DB_PORT=3306
-            DB_USER=$DB_USER
-            DB_PASSWORD=$DB_PASSWORD
-            DB_NAME=laptop_shop
-            JWT_SECRET=$JWT_SECRET
-            PYTHON_SERVICE_URL=http://reports-service:8000
-            EMAIL_USER=$EMAIL_USER
-            EMAIL_PASS=$EMAIL_PASS
-            FRONTEND_URL=$FRONTEND_URL
-            EOF
+            echo "=== Writing backend .env ==="
+            printf "PORT=5000\nDB_HOST=%s\nDB_PORT=3306\nDB_USER=%s\nDB_PASSWORD=%s\nDB_NAME=laptop_shop\nJWT_SECRET=%s\nPYTHON_SERVICE_URL=http://reports-service:8000\nEMAIL_USER=%s\nEMAIL_PASS=%s\n" \
+              "$DB_HOST" "$DB_USER" "$DB_PASSWORD" "$JWT_SECRET" "$EMAIL_USER" "$EMAIL_PASS" > backend/.env
 
-            echo "📝 Creating reports-service .env..."
-            cat > reports-service/.env <<EOF
-            DB_HOST=$DB_HOST
-            DB_PORT=3306
-            DB_USER=$DB_USER
-            DB_PASSWORD=$DB_PASSWORD
-            DB_NAME=laptop_shop
-            APP_PORT=8000
-            EOF
+            echo "=== Writing reports-service .env ==="
+            printf "DB_HOST=%s\nDB_PORT=3306\nDB_USER=%s\nDB_PASSWORD=%s\nDB_NAME=laptop_shop\nAPP_PORT=8000\n" \
+              "$DB_HOST" "$DB_USER" "$DB_PASSWORD" > reports-service/.env
 
-            echo "🛑 Stopping old containers..."
+            echo "=== Stopping old containers ==="
             docker-compose down --remove-orphans
 
-            echo "🧹 Cleaning unused images..."
+            echo "=== Cleaning unused images ==="
             docker system prune -f
 
-            echo "🔨 Building and starting containers..."
+            echo "=== Building and starting containers ==="
             docker-compose up -d --build
 
-            echo "⏳ Waiting for services..."
+            echo "=== Waiting for services ==="
             sleep 20
 
-            echo "📦 Container status:"
+            echo "=== Container status ==="
             docker-compose ps
 
-            echo "══════════════════════════════════════"
-            echo "✅ Deployment Completed Successfully"
-            echo "══════════════════════════════════════"
+            echo "=== Deployment complete ==="
