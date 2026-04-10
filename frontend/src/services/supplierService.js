@@ -19,3 +19,13 @@ export const deleteSupplier = async (id) => {
   const res = await api.delete(`/suppliers/${id}`);
   return res.data;
 };
+
+export const getSupplierProducts = async (supplierId) => {
+  const res = await api.get(`/suppliers/${supplierId}/products`);
+  return res.data;
+};
+
+export const getProductSuppliers = async (supplierId, productId) => {
+  const res = await api.get(`/suppliers/${supplierId}/products/${productId}/suppliers`);
+  return res.data;
+};

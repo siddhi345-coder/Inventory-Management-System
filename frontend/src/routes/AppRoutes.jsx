@@ -12,6 +12,7 @@ import CreateSalePage from "../pages/staff/CreateSalePage";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
 import ManagerSalesPage from "../pages/manager/ManagerSalesPage";
 import StockUpdatePage from "../pages/manager/StockUpdatePage";
+import ManagerSuppliersPage from "../pages/manager/ManagerSuppliersPage";
 import UserDashboard from "../pages/user/UserDashboard";
 import MyRequests from "../pages/user/MyRequests";
 import ProductRequests from "../pages/staff/ProductRequests";
@@ -153,6 +154,16 @@ const AppRoutes = () => {
             <ProtectedRoute>
               <RoleProtectedRoute allowedRoles={["manager"]}>
                 <StockUpdatePage />
+              </RoleProtectedRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manager/suppliers"
+          element={
+            <ProtectedRoute>
+              <RoleProtectedRoute allowedRoles={["manager"]}>
+                <ManagerSuppliersPage />
               </RoleProtectedRoute>
             </ProtectedRoute>
           }

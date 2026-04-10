@@ -154,7 +154,6 @@ export default function CustomersPage() {
     <Layout>
       <div className="page-header">
         <h1>Customers Management</h1>
-        <p>Manage customer records, view customer details, and add new customers.</p>
       </div>
 
       <Card>

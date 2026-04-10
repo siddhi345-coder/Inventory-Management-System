@@ -99,7 +99,6 @@ const PurchasesPage = () => {
     <Layout>
       <div className="page-header">
         <h1>Purchase Management</h1>
-        <p>Manage supplier purchases, add items to cart, and process purchase orders.</p>
       </div>
 
       <div>

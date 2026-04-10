@@ -52,7 +52,6 @@ const ManagerSalesPage = () => {
     <Layout>
       <div className="page-header">
         <h1>Sales History</h1>
-        <p>View all sales made by staff members.</p>
       </div>
 
       {showInvoice && selectedSale && (

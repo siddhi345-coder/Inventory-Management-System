@@ -65,14 +65,8 @@ const Sidebar = () => {
             <Link to="/products" className={`nav-link ${isActive("/products") ? "active" : ""}`}>
               <span className="nav-icon">🖥️</span>Products
             </Link>
-            <Link to="/suppliers" className={`nav-link ${isActive("/suppliers") ? "active" : ""}`}>
+            <Link to="/manager/suppliers" className={`nav-link ${isActive("/manager/suppliers") ? "active" : ""}`}>
               <span className="nav-icon">🏢</span>Suppliers
-            </Link>
-            <Link to="/customers" className={`nav-link ${isActive("/customers") ? "active" : ""}`}>
-              <span className="nav-icon">👥</span>Customers
-            </Link>
-            <Link to="/purchases" className={`nav-link ${isActive("/purchases") ? "active" : ""}`}>
-              <span className="nav-icon">📩</span>Purchases
             </Link>
             <Link to="/manager/sales" className={`nav-link ${isActive("/manager/sales") ? "active" : ""}`}>
               <span className="nav-icon">🛒</span>Sales

@@ -45,7 +45,6 @@ const ManagerDashboard = () => {
         <div className="dashboard-header">
           <div>
             <h1>Manager Dashboard</h1>
-            <p>Full access to inventory, purchases, sales and customer management</p>
           </div>
         </div>
 
@@ -60,7 +59,6 @@ const ManagerDashboard = () => {
 
         <div style={{ marginTop: '36px', background: 'white', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', padding: '24px' }}>
           <h2 style={{ marginBottom: '4px', color: '#333' }}>Stock Overview</h2>
-          <p style={{ margin: '0 0 16px', color: '#999', fontSize: '13px' }}>Products with stock below 10 are highlighted in red</p>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
               <thead>
