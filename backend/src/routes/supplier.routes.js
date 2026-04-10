@@ -6,6 +6,6 @@ router.post('/', ctrl.addSupplier);
 router.put('/:id', ctrl.updateSupplier);
 router.delete('/:id', ctrl.deleteSupplier);
 router.get('/:id/products', ctrl.getSupplierProducts);
-router.get('/:id/products/:productId/suppliers', ctrl.getProductSuppliers);
+router.get('/products/:productId/suppliers', ctrl.getProductSuppliers);
 
 module.exports = router;

@@ -25,7 +25,7 @@ export const getSupplierProducts = async (supplierId) => {
   return res.data;
 };
 
-export const getProductSuppliers = async (supplierId, productId) => {
-  const res = await api.get(`/suppliers/${supplierId}/products/${productId}/suppliers`);
+export const getProductSuppliers = async (productId) => {
+  const res = await api.get(`/suppliers/products/${productId}/suppliers`);
   return res.data;
 };
